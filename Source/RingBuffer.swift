@@ -17,12 +17,12 @@
 
 import Foundation
 internal class RingBuffer {
-    internal var buffer:Data
+    internal var buffer:[UInt8]
     var position:Int32 = 0
     var tail:Int32 = 0
     
-    init(data:Data) {
-        buffer = Data(data: data)
+    init(data:[UInt8]) {
+        buffer = data
     }
     func freeSpace() -> UInt32 {
         var res:UInt32 = 0
@@ -41,24 +41,23 @@ internal class RingBuffer {
         return res
     }
     
-    func appendByte(byte aByte:UInt8) -> Bool {
+    func appendByte(byte:UInt8) -> Bool {
         if freeSpace() < 1 {
             return false
         }
-        let pointer = UnsafeMutablePointer<UInt8>(buffer.mutableBytes)
-        let bpointer = UnsafeMutableBufferPointer(start: pointer, count: buffer.length)
-        bpointer[Int(position)] = aByte
+        buffer[Int(position)] = byte
         position+=1
         return true
     }
     
-    func appendData(input:Data, offset:Int32, length:Int32) -> Int32 {
+    func appendData(input:[UInt8], offset:Int32, length:Int32) -> Int32 {
         var totalWritten:Int32 = 0
+        var input = input
         var aLength = length
         var aOffset = offset
         if (position >= tail) {
             totalWritten = min(Int32(buffer.count) - Int32(position), Int32(aLength))
-            memcpy(buffer.mutableBytes + Int(position), (input as NSData).bytes + Int(aOffset), Int(totalWritten))
+            memcpy(&buffer + Int(position), &input + Int(aOffset), Int(totalWritten))
             position += totalWritten
             if totalWritten == aLength
             {
@@ -80,21 +79,17 @@ internal class RingBuffer {
         }
         
         let written:Int32 = min(Int32(freeSpaces), aLength)
-        memcpy(buffer.mutableBytes + Int(position), (input as NSData).bytes + Int(aOffset), Int(written))
+        memcpy(&buffer + Int(position), &input  + Int(aOffset), Int(written))
         position += written
         totalWritten += written
         
         return totalWritten
     }
     
-    func flushToOutputStream(stream:OutputStream) ->Int32 {
+    func flushToOutputStream(stream:NSOutputStream) ->Int32 {
         var totalWritten:Int32 = 0
-        
-        let data = buffer
-        let pointer = UnsafeMutablePointer<UInt8>(data.mutableBytes)
         if tail > position {
-            
-            let written:Int = stream.write(pointer + Int(tail), maxLength:Int(buffer.length - Int(tail)))
+            let written:Int = stream.write(&buffer + Int(tail), maxLength:Int(buffer.count - Int(tail)))
             if written <= 0 {
                 return totalWritten
             }
@@ -107,7 +102,7 @@ internal class RingBuffer {
         
         if (tail < position) {
             
-            let written:Int = stream.write(pointer + Int(tail), maxLength:Int(position - tail))
+            let written:Int = stream.write(&buffer + Int(tail), maxLength:Int(position - tail))
             if (written <= 0)
             {
                 return totalWritten

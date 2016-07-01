@@ -19,14 +19,14 @@ import Foundation
 
 let DEFAULT_RECURSION_LIMIT:Int32 = 64
 let DEFAULT_SIZE_LIMIT:Int32 = 64 << 20  // 64MB
-let BUFFER_SIZE:Int32 = 4096
+let BUFFER_SIZE:Int = 4096
 
 
 
 public class CodedInputStream
 {
-    public var buffer:Data
-    private var input:InputStream!
+    public var buffer:[UInt8]
+    private var input:InputStream
     private var bufferSize:Int32 = 0
     private var bufferSizeAfterLimit:Int32 = 0
     private var bufferPos:Int32 = 0
@@ -36,20 +36,20 @@ public class CodedInputStream
     private var recursionDepth:Int32 = 0
     private var recursionLimit:Int32 = 0
     private var sizeLimit:Int32 = 0
-    public init (data aData:Data)
+    public init (data:[UInt8])
     {
-        buffer = aData
+        buffer = data
         bufferSize = Int32(buffer.count)
         currentLimit = INT_MAX
         recursionLimit = DEFAULT_RECURSION_LIMIT
         sizeLimit = DEFAULT_SIZE_LIMIT
     }
-    public init (inputStream aInputStream:InputStream)
+    public init (inputStream:InputStream)
     {
-        buffer = Data(capacity: Int(BUFFER_SIZE))!
+        buffer = [UInt8](repeating: 0, count: BUFFER_SIZE)
         bufferSize = 0
-        input = aInputStream
-        input!.open()
+        input = inputStream
+        input.open()
         
         //
         currentLimit = INT_MAX

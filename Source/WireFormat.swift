@@ -324,11 +324,11 @@ public extension String
     {
         return fieldNumber.computeTagSize() + computeStringSizeNoTag()
     }
-    func utf8ToNSData()-> Data
+    func utf8ToNSData()-> [UInt8]
     {
         let bytes = [UInt8]() + self.utf8
-        let data = Data(bytes: UnsafePointer<UInt8>(bytes), count:bytes.count)
-        return data
+//        let data = Data(bytes: UnsafePointer<UInt8>(bytes), count:bytes.count)
+        return bytes
     }
 }
 

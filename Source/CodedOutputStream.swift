@@ -17,31 +17,31 @@
 
 import Foundation
 
-var DEFAULT_BUFFER_SIZE:Int32 = 4 * 1024
+var DEFAULT_BUFFER_SIZE:Int = 4 * 1024
 
 public class CodedOutputStream {
-    private var output:OutputStream!
+    private var output:NSOutputStream!
     internal var buffer:RingBuffer
     
-    public init (output aOutput:OutputStream!, data:NSMutableData) {
+    public init (output aOutput:NSOutputStream!, data:[UInt8]) {
         output = aOutput
         buffer = RingBuffer(data:data)
     }
   
-    public init(output aOutput:OutputStream!, bufferSize:Int32) {
-        let data = NSMutableData(length: Int(bufferSize))!
-        output = aOutput
+    public init(stream:NSOutputStream!, bufferSize:Int) {
+        let data = [UInt8](repeating: 0, count: bufferSize)
+        output = stream
         buffer = RingBuffer(data: data)
     }
    
-    public init(output:OutputStream) {
-        let data = NSMutableData(length: Int(DEFAULT_BUFFER_SIZE))!
-        self.output = output
+    public init(stream:NSOutputStream) {
+        let data = [UInt8](repeating: 0, count: DEFAULT_BUFFER_SIZE)
+        output = stream
         buffer = RingBuffer(data: data)
     }
     
-    public init(data aData:NSMutableData) {
-        buffer = RingBuffer(data: aData)
+    public init(data:[UInt8]) {
+        buffer = RingBuffer(data: data)
     }
     
     public func flush() throws {
@@ -57,10 +57,10 @@ public class CodedOutputStream {
         }
     }
     
-    public func writeRawData(data:Data) throws {
+    public func writeRawData(data:[UInt8]) throws {
         try writeRawData(data: data, offset:0, length: Int32(data.count))
     }
-    public func writeRawData(data:Data, offset:Int32, length:Int32) throws {
+    public func writeRawData(data:[UInt8], offset:Int32, length:Int32) throws {
         var aLength = length
         var aOffset = offset
         while (aLength > 0) {
@@ -200,12 +200,12 @@ public class CodedOutputStream {
         try writeMessageNoTag(value: value)
     }
     
-    public func writeDataNoTag(data:Data) throws {
+    public func writeDataNoTag(data:[UInt8]) throws {
         try writeRawVarint32(value: Int32(data.count))
         try writeRawData(data: data)
     }
     
-    public func writeData(fieldNumber:Int32, value:Data) throws {
+    public func writeData(fieldNumber:Int32, value:[UInt8]) throws {
         try writeTag(fieldNumber: fieldNumber, format: WireFormat.lengthDelimited)
         try writeDataNoTag(data: value)
     }
@@ -273,10 +273,10 @@ public class CodedOutputStream {
         try writeTag(fieldNumber: WireFormatMessage.setItem.rawValue, format:WireFormat.endGroup)
     }
     
-    public func writeRawMessageSetExtension(fieldNumber:Int32, value:Data) throws {
+    public func writeRawMessageSetExtension(fieldNumber:Int32, value:[UInt8]) throws {
         try writeTag(fieldNumber: WireFormatMessage.setItem.rawValue, format:WireFormat.startGroup)
         try writeUInt32(fieldNumber: WireFormatMessage.setTypeId.rawValue, value:UInt32(fieldNumber))
-        try writeData( fieldNumber: WireFormatMessage.setMessage.rawValue, value: value)
+        try writeData(fieldNumber: WireFormatMessage.setMessage.rawValue, value: value)
         try writeTag(fieldNumber: WireFormatMessage.setItem.rawValue, format:WireFormat.endGroup)
     }
     

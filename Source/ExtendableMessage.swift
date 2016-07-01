@@ -79,7 +79,7 @@ public class ExtendableMessage : GeneratedMessage
     
     public func extensionsAreInitialized() -> Bool {
         let arr = Array(extensionMap.values)
-        return isInitialized(arr)
+        return isInitialized(object:arr)
     }
     
     internal func ensureExtensionIsRegistered(extensions:ConcreateExtensionField)
@@ -323,7 +323,7 @@ public class ExtendableMessageBuilder:GeneratedMessageBuilder
     override public func mergeUnknownFields(unknownField: UnknownFieldSet) throws -> Self
     {
         let result:GeneratedMessage = internalGetResult
-        result.unknownFields = try UnknownFieldSet.builderWithUnknownFields(copyFrom: result.unknownFields).mergeUnknownFields(other: unknownFields).build()
+        result.unknownFields = try UnknownFieldSet.builderWithUnknownFields(copyFrom: result.unknownFields).mergeUnknownFields(other: unknownField).build()
         return self
     }
     
