@@ -60,7 +60,7 @@ public class CodedInputStream
         
         if bufferPos == bufferSize
         {
-            if !(try refillBuffer(false))
+            if !(try refillBuffer(mustSucceed: false))
             {
                 return true
             }
@@ -127,7 +127,7 @@ public class CodedInputStream
         }
         
         if (totalBytesRetired + bufferPos + size > currentLimit) {
-            try skipRawData(currentLimit - totalBytesRetired - bufferPos)
+            try skipRawData(size: currentLimit - totalBytesRetired - bufferPos)
             throw ProtocolBuffersError.InvalidProtocolBuffer("Truncated Message")
         }
         
@@ -144,14 +144,14 @@ public class CodedInputStream
             memcpy(bytes.mutableBytes, buffer.mutableBytes + Int(bufferPos), Int(pos))
             bufferPos = bufferSize
             
-            try refillBuffer(true)
+            try refillBuffer(mustSucceed: true)
             
             while (size - pos > bufferSize)
             {
                 memcpy(bytes.mutableBytes + Int(pos), buffer.mutableBytes, Int(bufferSize))
                 pos += bufferSize
                 bufferPos = bufferSize
-                try refillBuffer(true)
+                try refillBuffer(mustSucceed: true)
             }
             
             memcpy(bytes.mutableBytes + Int(pos), buffer.mutableBytes, Int(size - pos))
@@ -221,7 +221,7 @@ public class CodedInputStream
         
         if (totalBytesRetired + bufferPos + size > currentLimit) {
             
-            try skipRawData(currentLimit - totalBytesRetired - bufferPos)
+            try skipRawData(size: currentLimit - totalBytesRetired - bufferPos)
             throw ProtocolBuffersError.InvalidProtocolBuffer("Truncated Message")
         }
         
@@ -319,7 +319,7 @@ public class CodedInputStream
     
     public func skipField(tag:Int32) throws ->  Bool
     {
-        let wireFormat = WireFormat.getTagWireType(tag)
+        let wireFormat = WireFormat.getTagWireType(tag: tag)
         let format:WireFormat? = WireFormat(rawValue: wireFormat)
         
         guard let _ = format else {
@@ -333,11 +333,11 @@ public class CodedInputStream
             try readRawLittleEndian64()
             return true
         case .LengthDelimited:
-            try skipRawData(try readRawVarint32())
+            try skipRawData(size: try readRawVarint32())
             return true
         case .StartGroup:
             try skipMessage()
-            try checkLastTagWas(WireFormat.EndGroup.makeTag(WireFormat.getTagFieldNumber(tag)))
+            try checkLastTagWas(value: WireFormat.EndGroup.makeTag(fieldNumber: WireFormat.getTagFieldNumber(tag: tag)))
             return true
         case .EndGroup:
             return false
@@ -354,7 +354,7 @@ public class CodedInputStream
         while (true)
         {
             let tag:Int32 = try readTag()
-            let fieldSkip = try skipField(tag)
+            let fieldSkip = try skipField(tag: tag)
             if tag == 0 || !fieldSkip
             {
                 break
@@ -419,7 +419,7 @@ public class CodedInputStream
     {
         if (bufferPos == bufferSize)
         {
-            try refillBuffer(true)
+            try refillBuffer(mustSucceed: true)
         }
         let pointer = UnsafeMutablePointer<Int8>(buffer.mutableBytes)
         let res = pointer[Int(bufferPos)]
@@ -533,7 +533,7 @@ public class CodedInputStream
         }
         else
         {
-            let data = try readRawData(size)
+            let data = try readRawData(size: size)
             
             return String(data: data, encoding: NSUTF8StringEncoding)!
         }
@@ -550,7 +550,7 @@ public class CodedInputStream
         }
         else
         {
-            return try readRawData(size)
+            return try readRawData(size: size)
         }
     }
     
@@ -577,12 +577,12 @@ public class CodedInputStream
         return try readRawLittleEndian64()
     }
     public func readSInt32() throws -> Int32 {
-        return WireFormat.decodeZigZag32(try readRawVarint32())
+        return WireFormat.decodeZigZag32(n: try readRawVarint32())
     }
     
     public func readSInt64() throws -> Int64
     {
-        return WireFormat.decodeZigZag64(try readRawVarint64())
+        return WireFormat.decodeZigZag64(n: try readRawVarint64())
     }
     public func setRecursionLimit(limit:Int32) throws -> Int32 {
         
@@ -665,8 +665,8 @@ public class CodedInputStream
             throw ProtocolBuffersError.InvalidProtocolBuffer("Recursion Limit Exceeded")
         }
         recursionDepth+=1
-        try builder.mergeFromCodedInputStream(self, extensionRegistry:extensionRegistry)
-        try checkLastTagWas(WireFormat.EndGroup.makeTag(fieldNumber))
+        try builder.mergeFromCodedInputStream(input: self, extensionRegistry:extensionRegistry)
+        try checkLastTagWas(value: WireFormat.EndGroup.makeTag(fieldNumber: fieldNumber))
         recursionDepth-=1
     }
     public func readUnknownGroup(fieldNumber:Int32, builder:UnknownFieldSet.Builder) throws
@@ -675,8 +675,8 @@ public class CodedInputStream
             throw ProtocolBuffersError.InvalidProtocolBuffer("Recursion Limit Exceeded")
         }
         recursionDepth+=1
-        try builder.mergeFromCodedInputStream(self)
-        try checkLastTagWas(WireFormat.EndGroup.makeTag(fieldNumber))
+        try builder.mergeFromCodedInputStream(input: self)
+        try checkLastTagWas(value: WireFormat.EndGroup.makeTag(fieldNumber: fieldNumber))
         recursionDepth-=1
     }
 
@@ -685,12 +685,12 @@ public class CodedInputStream
         guard recursionDepth < recursionLimit else {
             throw ProtocolBuffersError.InvalidProtocolBuffer("Recursion Limit Exceeded")
         }
-        let oldLimit =  try pushLimit(length)
+        let oldLimit =  try pushLimit(byteLimit: length)
         recursionDepth+=1
-        try builder.mergeFromCodedInputStream(self, extensionRegistry:extensionRegistry)
-        try checkLastTagWas(0)
+        try builder.mergeFromCodedInputStream(input: self, extensionRegistry:extensionRegistry)
+        try checkLastTagWas(value: 0)
         recursionDepth-=1
-        popLimit(oldLimit)
+        popLimit(oldLimit: oldLimit)
     }
     
 }

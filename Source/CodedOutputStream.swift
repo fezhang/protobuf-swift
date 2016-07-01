@@ -54,7 +54,7 @@ public class CodedOutputStream
         guard let output = output else {
             throw ProtocolBuffersError.OutOfSpace
         }
-        buffer.flushToOutputStream(output)
+        buffer.flushToOutputStream(stream: output)
     }
    
     public func writeRawByte(byte aByte:UInt8) throws

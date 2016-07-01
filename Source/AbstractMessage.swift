@@ -25,7 +25,7 @@ public protocol MessageInit:class
     init()
 }
 
-public enum ProtocolBuffersError: ErrorType {
+public enum ProtocolBuffersError: ErrorProtocol {
     case Obvious(String)
     //Streams
     case InvalidProtocolBuffer(String)
@@ -44,7 +44,7 @@ public protocol Message:class,MessageInit
     func data() throws -> NSData
     static func classBuilder()-> MessageBuilder
     func classBuilder()-> MessageBuilder
-    
+
     //JSON
     func encode() throws -> Dictionary<String,AnyObject>
     static func decode(jsonMap:Dictionary<String,AnyObject>) throws -> Self
@@ -76,7 +76,7 @@ public func == (lhs: AbstractMessage, rhs: AbstractMessage) -> Bool
     return lhs.hashValue == rhs.hashValue
 }
 public class AbstractMessage:Hashable, Message {
-    
+
     public var unknownFields:UnknownFieldSet
     required public init()
     {
@@ -89,82 +89,82 @@ public class AbstractMessage:Hashable, Message {
         let data = NSMutableData(length: Int(ser_size))!
         let stream:CodedOutputStream = CodedOutputStream(data: data)
         do {
-            try writeToCodedOutputStream(stream)
+            try writeToCodedOutputStream(output: stream)
         }
         catch
         {
-            
+
         }
-        
+
         return stream.buffer.buffer
     }
-    
+
     public func isInitialized() -> Bool {
         return false
     }
     public func serializedSize() -> Int32 {
         return 0
     }
-    
+
     public func getDescription(indent:String) throws -> String {
         throw ProtocolBuffersError.Obvious("Override")
     }
-        
+
     public func writeToCodedOutputStream(output: CodedOutputStream) throws {
         throw ProtocolBuffersError.Obvious("Override")
     }
-    
+
     public func writeToOutputStream(output: NSOutputStream) throws
     {
         let codedOutput:CodedOutputStream = CodedOutputStream(output:output)
-        try! writeToCodedOutputStream(codedOutput)
+        try! writeToCodedOutputStream(output: codedOutput)
         try codedOutput.flush()
     }
-    
+
     public func writeDelimitedToOutputStream(outputStream:NSOutputStream) throws
     {
         let serializedDataSize = serializedSize()
         let codedOutputStream = CodedOutputStream(output: outputStream)
-        try codedOutputStream.writeRawVarint32(serializedDataSize)
-        try writeToCodedOutputStream(codedOutputStream)
+        try codedOutputStream.writeRawVarint32(value: serializedDataSize)
+        try writeToCodedOutputStream(output: codedOutputStream)
         try codedOutputStream.flush()
     }
-    
+
     public class func classBuilder() -> MessageBuilder
     {
         return AbstractMessageBuilder()
     }
-    
+
     public func classBuilder() -> MessageBuilder
     {
         return AbstractMessageBuilder()
     }
-    
+
     public var hashValue: Int {
         get {
             return unknownFields.hashValue
         }
     }
-    
-    
+
+
     //JSON
     public func encode() throws -> Dictionary<String, AnyObject> {
         throw ProtocolBuffersError.Obvious("JSON Encoding/Decoding available only in syntax=\"proto3\"")
     }
-    
+
     public class func decode(jsonMap: Dictionary<String, AnyObject>) throws -> Self {
         throw ProtocolBuffersError.Obvious("JSON Encoding/Decoding available only in syntax=\"proto3\"")
     }
-    
+
     public func toJSON() throws -> NSData {
-        let json = try NSJSONSerialization.dataWithJSONObject(encode(), options: NSJSONWritingOptions(rawValue:0))
+        let json = try NSJSONSerialization.data(withJSONObject: encode(), options: NSJSONWritingOptions(rawValue:0))
         return json
     }
-    
+
     public class func fromJSON(data:NSData) throws -> Self {
         throw ProtocolBuffersError.Obvious("JSON Encoding/Decoding available only in syntax=\"proto3\"")
     }
-    
+
 }
 
 
@@ -176,13 +176,13 @@ public class AbstractMessageBuilder:MessageBuilder
     {
         unknownFields = UnknownFieldSet(fields:Dictionary())
     }
-    
-    
+
+
     public func build() throws -> AbstractMessage {
-        
+
         return AbstractMessage()
     }
-    
+
     public func clone() throws -> Self
     {
         return self
@@ -191,60 +191,60 @@ public class AbstractMessageBuilder:MessageBuilder
     {
         return self
     }
-    
+
     public func isInitialized() -> Bool
     {
         return false
     }
-    
+
     public func mergeFromCodedInputStream(input:CodedInputStream) throws ->  Self
     {
-        return try mergeFromCodedInputStream(input, extensionRegistry:ExtensionRegistry())
+        return try mergeFromCodedInputStream(input: input, extensionRegistry:ExtensionRegistry())
     }
-    
+
     public func mergeFromCodedInputStream(input:CodedInputStream, extensionRegistry:ExtensionRegistry) throws ->  Self
     {
         throw ProtocolBuffersError.Obvious("Override")
     }
-    
+
     public func mergeUnknownFields(unknownField:UnknownFieldSet) throws ->  Self
     {
-        let merged:UnknownFieldSet = try UnknownFieldSet.builderWithUnknownFields(unknownFields).mergeUnknownFields(unknownField).build()
+        let merged:UnknownFieldSet = try UnknownFieldSet.builderWithUnknownFields(copyFrom: unknownFields).mergeUnknownFields(other: unknownField).build()
         unknownFields = merged
         return self
     }
-    
+
     public func mergeFromData(data:NSData) throws ->  Self
     {
         let input:CodedInputStream = CodedInputStream(data:data)
-        try mergeFromCodedInputStream(input)
-        try input.checkLastTagWas(0)
+        try mergeFromCodedInputStream(input: input)
+        try input.checkLastTagWas(value: 0)
         return self
     }
-    
+
     public func mergeFromData(data:NSData, extensionRegistry:ExtensionRegistry) throws ->  Self
     {
         let input:CodedInputStream = CodedInputStream(data:data)
-        try mergeFromCodedInputStream(input, extensionRegistry:extensionRegistry)
-        try input.checkLastTagWas(0)
+        try mergeFromCodedInputStream(input: input, extensionRegistry:extensionRegistry)
+        try input.checkLastTagWas(value: 0)
         return self
     }
-    
+
     public func mergeFromInputStream(input:NSInputStream) throws -> Self
     {
         let codedInput:CodedInputStream = CodedInputStream(inputStream: input)
-        try mergeFromCodedInputStream(codedInput)
-        try codedInput.checkLastTagWas(0)
+        try mergeFromCodedInputStream(input: codedInput)
+        try codedInput.checkLastTagWas(value: 0)
         return self
     }
     public func mergeFromInputStream(input:NSInputStream, extensionRegistry:ExtensionRegistry) throws -> Self
     {
         let codedInput:CodedInputStream = CodedInputStream(inputStream: input)
-        try mergeFromCodedInputStream(codedInput, extensionRegistry:extensionRegistry)
-        try codedInput.checkLastTagWas(0)
+        try mergeFromCodedInputStream(input: codedInput, extensionRegistry:extensionRegistry)
+        try codedInput.checkLastTagWas(value: 0)
         return self
     }
-    
+
     //Delimited Encoding/Decoding
     public func mergeDelimitedFromInputStream(input: NSInputStream) throws -> Self? {
         var firstByte:UInt8 = 0
@@ -252,21 +252,20 @@ public class AbstractMessageBuilder:MessageBuilder
         {
             return nil
         }
-        let rSize = try CodedInputStream.readRawVarint32(firstByte, inputStream: input)
+        let rSize = try CodedInputStream.readRawVarint32(firstByte: firstByte, inputStream: input)
         let data  = NSMutableData(length: Int(rSize))
         let pointer = UnsafeMutablePointer<UInt8>(data!.mutableBytes)
         input.read(pointer, maxLength: Int(rSize))
-        return  try mergeFromData(data!)
+        return  try mergeFromData(data: data!)
     }
-    
+
     //JSON
     class public func decodeToBuilder(jsonMap: Dictionary<String, AnyObject>) throws -> Self {
         throw ProtocolBuffersError.Obvious("JSON Encoding/Decoding available only in syntax=\"proto3\"")
     }
-    
+
     public class func fromJSONToBuilder(data: NSData) throws -> Self {
         throw ProtocolBuffersError.Obvious("JSON Encoding/Decoding available only in syntax=\"proto3\"")
     }
 
 }
-
