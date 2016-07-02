@@ -47,3 +47,4 @@ DerivedData
 .idea/
 
 compile
+ProtocolBuffers.xcodeproj
