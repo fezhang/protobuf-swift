@@ -48,3 +48,5 @@ DerivedData
 
 compile
 ProtocolBuffers.xcodeproj
+.build
+*.log
