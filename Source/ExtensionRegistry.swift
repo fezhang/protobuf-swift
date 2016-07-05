@@ -24,17 +24,17 @@ public protocol ExtensionField
     var fieldNumber:Int32 {get set}
     var extendedClass:AnyClassType {get}
     var wireType:WireFormat {get}
-    func writeValueIncludingTagToCodedOutputStream(_ value:Any, output:CodedOutputStream) throws
+    func writeValueIncludingTagToCodedOutputStream(value:Any, output:CodedOutputStream) throws
     func computeSerializedSizeIncludingTag(_ value:Any) throws -> Int32
     func getDescription(_ value:Any, indent:String) throws -> String
     func mergeFromCodedInputStream(_ input:CodedInputStream, unknownFields:UnknownFieldSet.Builder, extensionRegistry:ExtensionRegistry, builder:ExtendableMessageBuilder, tag:Int32) throws
-    
+
 }
 
 public class ExtensionRegistry
 {
     private var classMap:[String : [Int32 : ConcreateExtensionField]]
-    
+
     public init()
     {
         self.classMap = [:]
@@ -43,9 +43,9 @@ public class ExtensionRegistry
     {
         self.classMap = classMap
     }
-    
+
     public func getExtension(_ clName:AnyClassType, fieldNumber:Int32) -> ConcreateExtensionField? {
-        
+
         let extensionMap = classMap[clName.className()]
         if extensionMap == nil
         {
@@ -53,7 +53,7 @@ public class ExtensionRegistry
         }
         return extensionMap![fieldNumber]
     }
-    
+
     public func addExtension(_ extensions:ConcreateExtensionField)
     {
         let extendedClass = extensions.extendedClass.className()
@@ -61,11 +61,11 @@ public class ExtensionRegistry
         if extensionMap == nil
         {
             extensionMap = [Int32 : ConcreateExtensionField]()
-           
+
         }
         extensionMap![extensions.fieldNumber] = extensions
         classMap[extendedClass] = extensionMap
-        
+
     }
-    
+
 }

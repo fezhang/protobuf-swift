@@ -59,10 +59,10 @@ final public class ConcreateExtensionField:ExtensionField,Equatable
         {
             return extendedClass.className()
         }
-        
+
     }
 
-    
+
     public init(type:ExtensionType,
         extendedClass:AnyClassType,
         fieldNumber:Int32,
@@ -81,7 +81,7 @@ messageOrGroupClass:Any.Type,
         self.isPacked = isPacked
         self.isMessageSetWireFormat = isMessageSetWireFormat
     }
-    
+
     public var wireType:WireFormat
     {
         get {
@@ -110,9 +110,9 @@ messageOrGroupClass:Any.Type,
             case .extensionTypeEnum:     return WireFormat.varint
             }
         }
-       
+
     }
-    
+
     func typeIsPrimitive(_ type:ExtensionType) ->Bool
     {
         switch type {
@@ -120,11 +120,11 @@ messageOrGroupClass:Any.Type,
             return true
         default:
             return false
-            
+
         }
 
     }
-    
+
     func typeIsFixedSize(_ type:ExtensionType) -> Bool
     {
         switch (type) {
@@ -133,8 +133,8 @@ messageOrGroupClass:Any.Type,
                 return false
         }
     }
-    
-    
+
+
     func typeSize(_ type:ExtensionType) -> Int32
     {
         switch type {
@@ -145,7 +145,7 @@ messageOrGroupClass:Any.Type,
                 return 0
         }
     }
-    
+
     func  writeSingleValueIncludingTag(_ value:Any, output:CodedOutputStream) throws
     {
         switch type {
@@ -153,132 +153,132 @@ messageOrGroupClass:Any.Type,
         case .extensionTypeBool:
             let downCastValue = value as! Bool
             try output.writeBool(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeFixed32:
             let downCastValue = value as! UInt32
             try output.writeFixed32(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeSFixed32:
              let downCastValue = value as! Int32
             try output.writeSFixed32(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeFixed64:
             let downCastValue = value as! UInt64
             try output.writeFixed64(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeSFixed64:
             let downCastValue = value as! Int64
             try output.writeSFixed64(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeDouble:
             let downCastValue = value as! Double
             try output.writeDouble(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeFloat:
             let downCastValue = value as! Float
             try output.writeFloat(fieldNumber, value:downCastValue)
-       
+
         case .extensionTypeInt32:
             let downCastValue = value as! Int32
             try output.writeInt32(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeInt64:
             let downCastValue = value as! Int64
             try output.writeInt64(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeSInt32:
             let downCastValue = value as! Int32
             try output.writeSInt32(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeSInt64:
             let downCastValue = value as! Int64
             try output.writeSInt64(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeUInt32:
             let downCastValue = value as! UInt32
             try output.writeUInt32(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeUInt64:
             let downCastValue = value as! UInt64
             try output.writeUInt64(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeBytes:
             let downCastValue = value as! NSData
             try output.writeData(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeString:
             let downCastValue = value as! String
             try output.writeString(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeEnum:
             let downCastValue = value as! Int32
             try output.writeEnum(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeGroup:
             let downCastValue = value as! GeneratedMessage
             try output.writeGroup(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeMessage where isMessageSetWireFormat == true:
             let downCastValue = value as! GeneratedMessage
             try output.writeMessageSetExtension(fieldNumber, value:downCastValue)
-        
+
         case .extensionTypeMessage where isMessageSetWireFormat == false:
             let downCastValue = value as! GeneratedMessage
             try output.writeMessage(fieldNumber, value:downCastValue)
-        
+
         default:
              throw ProtocolBuffersError.invalidProtocolBuffer("Invalid Extensions Type")
         }
     }
-    
-    func  writeSingleValueNoTag(_ value:Any, output:CodedOutputStream) throws
+
+    func  writeSingleValueNoTag(value:Any, output:CodedOutputStream) throws
     {
         switch type {
 
         case .extensionTypeBool:
             let downCastValue = value as! Bool
             try output.writeBoolNoTag(downCastValue)
-            
+
         case .extensionTypeFixed32:
             let downCastValue = value as! UInt32
             try output.writeFixed32NoTag(downCastValue)
-        
+
         case .extensionTypeSFixed32:
             let downCastValue = value as! Int32
             try output.writeSFixed32NoTag(downCastValue)
-        
+
         case .extensionTypeInt32:
             let downCastValue = value as! Int32
             try output.writeInt32NoTag(downCastValue)
-            
+
         case .extensionTypeSInt32:
             let downCastValue = value as! Int32
             try output.writeSInt32NoTag(downCastValue)
-            
+
         case .extensionTypeEnum:
             let downCastValue = value as! Int32
             try output.writeEnumNoTag(downCastValue)
-            
+
         case .extensionTypeFixed64:
             let downCastValue = value as! UInt64
             try output.writeFixed64NoTag(downCastValue)
-            
+
         case .extensionTypeInt64:
             let downCastValue = value as! Int64
             try output.writeInt64NoTag(downCastValue)
-            
+
         case .extensionTypeSInt64:
             let downCastValue = value as! Int64
             try output.writeSInt64NoTag(downCastValue)
-        
+
         case .extensionTypeSFixed64:
             let downCastValue = value as! Int64
             try output.writeSFixed64NoTag(downCastValue)
-            
+
         case .extensionTypeDouble:
             let downCastValue = value as! Double
             try output.writeDoubleNoTag(downCastValue)
-            
+
         case .extensionTypeFloat:
             let downCastValue = value as! Float
             try output.writeFloatNoTag(downCastValue)
@@ -286,11 +286,11 @@ messageOrGroupClass:Any.Type,
         case .extensionTypeUInt32:
             let downCastValue = value as! UInt32
             try output.writeUInt32NoTag(downCastValue)
-        
+
         case .extensionTypeUInt64:
             let downCastValue = value as! UInt64
             try output.writeUInt64NoTag(downCastValue)
-        
+
         case .extensionTypeBytes:
             let downCastValue = value as! NSData
             try output.writeDataNoTag(downCastValue)
@@ -298,7 +298,7 @@ messageOrGroupClass:Any.Type,
         case .extensionTypeString:
             let downCastValue = value as! String
             try output.writeStringNoTag(downCastValue)
-        
+
         case .extensionTypeGroup:
             let downCastValue = value as! GeneratedMessage
             try output.writeGroupNoTag(fieldNumber, value:downCastValue)
@@ -309,35 +309,35 @@ messageOrGroupClass:Any.Type,
 
         }
     }
-    
-    func  computeSingleSerializedSizeIncludingTag(_ value:Any) -> Int32
+
+    func  computeSingleSerializedSizeIncludingTag(value: Any) -> Int32
     {
         switch type {
-        
+
         case .extensionTypeFixed32:
             let downCastValue = value as! UInt32
             return downCastValue.computeFixed32Size(fieldNumber)
-            
+
         case .extensionTypeSFixed32:
             let downCastValue = value as! Int32
             return downCastValue.computeSFixed32Size(fieldNumber)
-            
+
         case .extensionTypeSInt32:
             let downCastValue = value as! Int32
             return downCastValue.computeSInt32Size(fieldNumber)
-            
+
         case .extensionTypeInt32:
             let downCastValue = value as! Int32
             return downCastValue.computeInt32Size(fieldNumber)
-            
+
         case .extensionTypeEnum:
             let downCastValue = value as! Int32
             return downCastValue.computeEnumSize(fieldNumber)
-            
+
         case .extensionTypeFixed64:
             let downCastValue = value as! UInt64
             return downCastValue.computeFixed64Size(fieldNumber)
-            
+
         case .extensionTypeSFixed64:
             let downCastValue = value as! Int64
             return downCastValue.computeSFixed64Size(fieldNumber)
@@ -345,43 +345,43 @@ messageOrGroupClass:Any.Type,
         case .extensionTypeInt64:
             let downCastValue = value as! Int64
             return downCastValue.computeInt64Size(fieldNumber)
-            
+
         case .extensionTypeSInt64:
             let downCastValue = value as! Int64
             return downCastValue.computeSInt64Size(fieldNumber)
-            
+
         case .extensionTypeFloat:
             let downCastValue = value as! Float
             return downCastValue.computeFloatSize(fieldNumber)
-            
+
         case .extensionTypeDouble:
             let downCastValue = value as! Double
              return downCastValue.computeDoubleSize(fieldNumber)
-            
+
         case .extensionTypeUInt32:
             let downCastValue = value as! UInt32
             return downCastValue.computeUInt32Size(fieldNumber)
-            
+
         case .extensionTypeUInt64:
             let downCastValue = value as! UInt64
            return downCastValue.computeUInt64Size(fieldNumber)
-            
+
         case .extensionTypeBytes:
             let downCastValue = value as! NSData
             return downCastValue.computeDataSize(fieldNumber)
-            
+
         case .extensionTypeString:
             let downCastValue = value as! String
             return downCastValue.computeStringSize(fieldNumber)
-            
+
         case .extensionTypeGroup:
             let downCastValue = value as! GeneratedMessage
             return downCastValue.computeGroupSize(fieldNumber)
-            
+
         case .extensionTypeMessage where isMessageSetWireFormat == true:
             let downCastValue = value as! GeneratedMessage
             return downCastValue.computeMessageSetExtensionSize(fieldNumber)
-            
+
         case .extensionTypeMessage where isMessageSetWireFormat == false:
             let downCastValue = value as! GeneratedMessage
             return downCastValue.computeMessageSize(fieldNumber)
@@ -392,86 +392,86 @@ messageOrGroupClass:Any.Type,
             return 0
         }
     }
-    
-    func  computeSingleSerializedSizeNoTag(value:Any) -> Int32
+
+    func  computeSingleSerializedSizeNoTag(value: Any) -> Int32
     {
         switch type {
 
         case .extensionTypeBool:
             let downCastValue = value as! Bool
             return downCastValue.computeBoolSizeNoTag()
-            
+
         case .extensionTypeFixed32:
             let downCastValue = value as! UInt32
             return downCastValue.computeFixed32SizeNoTag()
-            
+
         case .extensionTypeSFixed32:
             let downCastValue = value as! Int32
             return downCastValue.computeSFixed32SizeNoTag()
-        
+
         case .extensionTypeInt32:
             let downCastValue = value as! Int32
             return downCastValue.computeInt32SizeNoTag()
-        
+
         case .extensionTypeSInt32:
             let downCastValue = value as! Int32
             return downCastValue.computeSInt32SizeNoTag()
-            
+
         case .extensionTypeEnum:
             let downCastValue = value as! Int32
             return downCastValue.computeEnumSizeNoTag()
-            
+
         case .extensionTypeFixed64:
             let downCastValue = value as! UInt64
             return downCastValue.computeFixed64SizeNoTag()
-            
+
         case .extensionTypeSFixed64:
             let downCastValue = value as! Int64
             return downCastValue.computeSFixed64SizeNoTag()
-        
+
         case .extensionTypeInt64:
             let downCastValue = value as! Int64
             return downCastValue.computeInt64SizeNoTag()
-            
+
         case .extensionTypeSInt64:
             let downCastValue = value as! Int64
             return downCastValue.computeSInt64SizeNoTag()
-            
+
         case .extensionTypeFloat:
             let downCastValue = value as! Float
             return downCastValue.computeFloatSizeNoTag()
-            
+
         case .extensionTypeDouble:
             let downCastValue = value as! Double
             return downCastValue.computeDoubleSizeNoTag()
-            
+
         case .extensionTypeUInt32:
             let downCastValue = value as! UInt32
             return downCastValue.computeUInt32SizeNoTag()
-            
+
         case .extensionTypeUInt64:
             let downCastValue = value as! UInt64
             return downCastValue.computeUInt64SizeNoTag()
-            
+
         case .extensionTypeBytes:
             let downCastValue = value as! NSData
             return downCastValue.computeDataSizeNoTag()
-            
+
         case .extensionTypeString:
             let downCastValue = value as! String
             return downCastValue.computeStringSizeNoTag()
-            
+
         case .extensionTypeGroup:
             let downCastValue = value as! GeneratedMessage
             return downCastValue.computeGroupSizeNoTag()
-            
+
         case .extensionTypeMessage:
             let downCastValue = value as! GeneratedMessage
             return downCastValue.computeMessageSizeNoTag()
         }
     }
-    
-    func writeDescriptionOfSingleValue(_ value:Any, indent:String) throws -> String
+
+    func writeDescriptionOfSingleValue(value:Any, indent:String) throws -> String
     {
         var output = ""
         if typeIsPrimitive(type) {
@@ -485,12 +485,12 @@ messageOrGroupClass:Any.Type,
         }
         return output
     }
-    
-    func writeRepeatedValuesIncludingTags<T>(_ values:Array<T>, output:CodedOutputStream) throws {
+
+    func writeRepeatedValuesIncludingTags<T> (values: (Array<T>), output: CodedOutputStream) throws {
         if (isPacked) {
             try output.writeTag(fieldNumber, format: WireFormat.lengthDelimited)
             var dataSize:Int32 = 0
-            
+
             if (typeIsFixedSize(type))
             {
                 dataSize = Int32(values.count) * typeSize(type)
@@ -505,9 +505,9 @@ messageOrGroupClass:Any.Type,
             try output.writeRawVarint32(dataSize)
             for value in values
             {
-                try writeSingleValueNoTag(value, output: output)
+                try writeSingleValueNoTag(value: value, output: output)
             }
-            
+
         }
         else
         {
@@ -517,8 +517,8 @@ messageOrGroupClass:Any.Type,
             }
         }
     }
-    
-    func computeRepeatedSerializedSizeIncludingTags<T>(_ values:Array<T>) -> Int32
+
+    func computeRepeatedSerializedSizeIncludingTags<T> (_ values: (Array<T>) ) -> Int32
     {
         if (isPacked) {
             var size:Int32 = 0
@@ -545,7 +545,7 @@ messageOrGroupClass:Any.Type,
             return size
         }
     }
-    
+
     public func computeSerializedSizeIncludingTag(_ value:Any) -> Int32
     {
         if isRepeated
@@ -582,83 +582,34 @@ messageOrGroupClass:Any.Type,
         }
     }
 
-    
-    public func writeValueIncludingTagToCodedOutputStream(_ value:Any, output:CodedOutputStream) throws
+
+    public func writeValueIncludingTagToCodedOutputStream(value:Any, output:CodedOutputStream) throws
     {
-        
+
         if isRepeated
         {
             switch value
             {
             case let values as [Int32]:
-                try writeRepeatedValuesIncludingTags(values, output:output)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             case let values as [Int64]:
-                try writeRepeatedValuesIncludingTags(values, output:output)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             case let values as [UInt64]:
-                try writeRepeatedValuesIncludingTags(values, output:output)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             case let values as [UInt32]:
-                try writeRepeatedValuesIncludingTags(values, output:output)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             case let values as [Bool]:
-                try writeRepeatedValuesIncludingTags(values, output:output)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             case let values as [Float]:
-                try writeRepeatedValuesIncludingTags(values, output:output)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             case let values as [Double]:
-                try writeRepeatedValuesIncludingTags(values, output:output)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             case let values as [String]:
-                try writeRepeatedValuesIncludingTags(values, output:output)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             case let values as Array<NSData>:
-                try writeRepeatedValuesIncludingTags(values, output:output)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             case let values as [GeneratedMessage]:
-                try writeRepeatedValuesIncludingTags(values, output:output)
-            default:
-                break
-            }
-            
-        }
-        else
-        {
-            try writeSingleValueIncludingTag(value, output:output)
-        }
-    }
-    
-    private func iterationRepetedValuesForDescription<T>(_ values:Array<T>, indent:String) throws -> String
-    {
-        var output = ""
-        for singleValue in values
-        {
-            output += try writeDescriptionOfSingleValue(singleValue, indent: indent)
-        }
-        return output
-    }
-    
-    public func getDescription(_ value:Any, indent:String) throws -> String
-    {
-  
-        var output = ""
-        if isRepeated
-        {
-            switch value
-            {
-            case let values as [Int32]:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
-            case let values as [Int64]:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
-            case let values as [UInt64]:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
-            case let values as [UInt32]:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
-            case let values as [Bool]:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
-            case let values as [Float]:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
-            case let values as [Double]:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
-            case let values as [String]:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
-            case let values as Array<NSData>:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
-            case let values as [GeneratedMessage]:
-                output += try iterationRepetedValuesForDescription(values, indent: indent)
+                try writeRepeatedValuesIncludingTags(values: values, output:output)
             default:
                 break
             }
@@ -666,18 +617,67 @@ messageOrGroupClass:Any.Type,
         }
         else
         {
-            output += try writeDescriptionOfSingleValue(value, indent:indent)
+            try writeSingleValueIncludingTag(value, output:output)
+        }
+    }
+
+    private func iterationRepetedValuesForDescription<T>(values: (Array<T>), indent:String) throws -> String
+    {
+        var output = ""
+        for singleValue in values
+        {
+            output += try writeDescriptionOfSingleValue(value: singleValue, indent: indent)
         }
         return output
     }
-    
-  
-    
+
+    public func getDescription(_ value:Any, indent:String) throws -> String
+    {
+
+        var output = ""
+        if isRepeated
+        {
+            switch value
+            {
+            case let values as [Int32]:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            case let values as [Int64]:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            case let values as [UInt64]:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            case let values as [UInt32]:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            case let values as [Bool]:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            case let values as [Float]:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            case let values as [Double]:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            case let values as [String]:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            case let values as Array<NSData>:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            case let values as [GeneratedMessage]:
+                output += try iterationRepetedValuesForDescription(values: values, indent: indent)
+            default:
+                break
+            }
+
+        }
+        else
+        {
+            output += try writeDescriptionOfSingleValue(value: value, indent:indent)
+        }
+        return output
+    }
+
+
+
     func mergeMessageSetExtentionFromCodedInputStream(_ input:CodedInputStream, unknownFields:UnknownFieldSet.Builder) throws
     {
          throw ProtocolBuffersError.illegalState("Method Not Supported")
     }
-    
+
     func readSingleValueFromCodedInputStream(_ input:CodedInputStream, extensionRegistry:ExtensionRegistry) throws -> Any
     {
         switch type {
@@ -716,8 +716,8 @@ messageOrGroupClass:Any.Type,
         case .extensionTypeGroup:
             if let mg = messageOrGroupClass as? GeneratedMessage.Type
             {
-                
-                
+
+
                 let buider = mg.classBuilder()
                 try input.readGroup(fieldNumber, builder: buider, extensionRegistry: extensionRegistry)
                 let mes = try buider.build()
@@ -734,7 +734,7 @@ messageOrGroupClass:Any.Type,
         }
         return ""
     }
-    
+
     public func mergeFromCodedInputStream(_ input:CodedInputStream, unknownFields:UnknownFieldSet.Builder, extensionRegistry:ExtensionRegistry, builder:ExtendableMessageBuilder, tag:Int32) throws {
         if (isPacked) {
             let length:Int32 = try input.readRawVarint32()
@@ -759,6 +759,6 @@ messageOrGroupClass:Any.Type,
             }
         }
     }
-    
+
 
 }
